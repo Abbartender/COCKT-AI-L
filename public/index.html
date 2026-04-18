@@ -103,6 +103,25 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
+.pairing-main{display:block!important;grid-template-columns:unset!important}
+.panel-full{padding:2.5rem 3rem;max-width:900px;margin:0 auto;width:100%}
+.pairing-input-area{width:100%;background:var(--white);border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:300;color:var(--black);padding:1rem;outline:none;line-height:1.8;resize:vertical;min-height:140px;transition:border-color 0.2s}
+.pairing-input-area:focus{border-color:var(--black)}
+.pairing-type-tags{display:flex;gap:8px;margin-bottom:1.5rem}
+.pairing-results{margin-top:2rem}
+.pairing-results-label{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray);margin-bottom:1.2rem;display:flex;align-items:center;gap:0.75rem}
+.pairing-results-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.pairing-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem}
+.pairing-card{background:var(--black);color:var(--white);padding:1.25rem 1.5rem}
+.pairing-card-cat{font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem}
+.pairing-card-items{font-size:0.9rem;font-weight:500;margin-bottom:0.5rem;line-height:1.5}
+.pairing-card-why{font-size:0.78rem;font-weight:300;color:#aaa;line-height:1.6}
+.pairing-cocktail{background:var(--white);border:1px solid var(--black);padding:1.5rem;margin-top:1rem}
+.pairing-cocktail-label{font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--red);margin-bottom:0.75rem}
+.pairing-cocktail-content{font-size:0.88rem;font-weight:300;line-height:1.8;white-space:pre-wrap}
+.pairing-empty{min-height:200px;display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;border:1px dashed var(--border)}
+@media(max-width:768px){.panel-full{padding:1.5rem}.pairing-cards{grid-template-columns:1fr}}
+
 @keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes loadbar{0%{width:0;opacity:1}70%{width:85%;opacity:1}100%{width:100%;opacity:0}}
@@ -137,10 +156,11 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 <nav class="nav-tabs">
   <button class="nav-tab active" onclick="switchTab('manual')">Configuración manual</button>
   <button class="nav-tab" onclick="switchTab('pdf')">Subir carta / identidad</button>
+  <button class="nav-tab" onclick="switchTab('pairing')">Food Pairing Match</button>
 </nav>
 
-<main>
-  <div class="panel-left">
+<main id="main-layout">
+  <div class="panel-left" id="panel-left-cols">
 
     <div class="tab-panel active" id="tab-manual">
       <div class="section-label">Perfil del cóctel</div>
@@ -305,6 +325,41 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
   </div>
 </main>
 
+<!-- PAIRING PANEL — full width, outside main grid -->
+<div id="panel-pairing" style="display:none">
+  <div class="panel-full">
+    <div class="section-label" style="margin-bottom:1rem">Analizá tu receta</div>
+
+    <div class="pairing-type-tags">
+      <div class="tag active" data-group="ptype" id="ptype-coctel">Cóctel</div>
+      <div class="tag" data-group="ptype" id="ptype-plato">Plato / snack</div>
+      <div class="tag" data-group="ptype" id="ptype-ambos">Combinación cóctel + plato</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Pegá o escribí tu receta</label>
+      <textarea class="pairing-input-area" id="pairing-receta" placeholder="Ej: Ceviche de camarón con leche de tigre, ají amarillo, cilantro, maíz tostado y aguacate..."></textarea>
+    </div>
+
+    <div class="form-group" style="margin-top:1rem">
+      <label class="form-label">Objetivo del match (opcional)</label>
+      <input type="text" id="pairing-objetivo" placeholder="Ej: busco contraste, potenciar los cítricos, sugerir cóctel de maridaje...">
+    </div>
+
+    <button class="btn-generate" id="btn-pairing" onclick="analizarPairing()" style="margin-top:1.5rem">Analizar y sugerir matches</button>
+
+    <div class="pairing-results" id="pairing-results" style="display:none">
+      <div class="pairing-results-label">Sugerencias de Food Pairing</div>
+      <div class="pairing-cards" id="pairing-cards"></div>
+      <div class="pairing-results-label" style="margin-top:1.5rem" id="pairing-cocktail-label">Cóctel / plato complementario</div>
+      <div class="pairing-cocktail" id="pairing-cocktail">
+        <div class="pairing-cocktail-content" id="pairing-cocktail-content"></div>
+      </div>
+    </div>
+    <div class="pairing-empty" id="pairing-empty">Ingresá una receta para ver sugerencias</div>
+  </div>
+</div>
+
 <div class="ficha-overlay" id="ficha-overlay">
   <div class="ficha-container">
     <div class="ficha-header">
@@ -355,9 +410,12 @@ if(typeof pdfjsLib!=='undefined')pdfjsLib.GlobalWorkerOptions.workerSrc='https:/
 let pdfText='',lastPrompt='';
 
 function switchTab(t){
-  document.querySelectorAll('.nav-tab').forEach((el,i)=>el.classList.toggle('active',(i===0&&t==='manual')||(i===1&&t==='pdf')));
+  document.querySelectorAll('.nav-tab').forEach((el,i)=>el.classList.toggle('active',(i===0&&t==='manual')||(i===1&&t==='pdf')||(i===2&&t==='pairing')));
   document.getElementById('tab-manual').classList.toggle('active',t==='manual');
   document.getElementById('tab-pdf').classList.toggle('active',t==='pdf');
+  const isPairing=t==='pairing';
+  document.getElementById('main-layout').style.display=isPairing?'none':'grid';
+  document.getElementById('panel-pairing').style.display=isPairing?'block':'none';
 }
 
 document.querySelectorAll('.tag').forEach(tag=>{
@@ -487,6 +545,77 @@ function abrirFicha(){
 function cerrarFicha(){
   document.getElementById('ficha-overlay').classList.remove('visible');
   document.body.style.overflow='';
+}
+
+async function analizarPairing(){
+  const receta=document.getElementById('pairing-receta').value.trim();
+  if(!receta){alert('Ingresá una receta para analizar.');return;}
+  const objetivo=document.getElementById('pairing-objetivo').value;
+  const ptypeActive=document.querySelector('.tag[data-group="ptype"].active');
+  const tipo=ptypeActive?ptypeActive.textContent.trim():'Cóctel';
+  const btn=document.getElementById('btn-pairing');
+  btn.disabled=true;btn.textContent='Analizando...';
+  setLoading(true);
+  document.getElementById('pairing-empty').style.display='none';
+  document.getElementById('pairing-results').style.display='none';
+
+  const PAIRING_SYSTEM=`Eres un experto en Food Pairing con conocimiento profundo de "The Flavor Bible" de Karen Page y los principios científicos de Food Pairing (compuestos aromáticos compartidos). Analizás recetas e identificás afinidades y contrastes aromáticos con precisión técnica.`;
+
+  const prompt=`Analizá esta receta de tipo "${tipo}" aplicando los principios de Food Pairing y The Flavor Bible:
+
+RECETA:
+${receta}
+${objetivo?`\nOBJETIVO: ${objetivo}`:''}
+
+Respondé ÚNICAMENTE con este JSON, sin texto antes ni después, sin bloques de código markdown:
+{
+  "categorias": [
+    {
+      "cat": "Ingredientes que potencian",
+      "items": "ingrediente1, ingrediente2, ingrediente3",
+      "why": "explicación aromática breve de por qué funcionan"
+    },
+    {
+      "cat": "Ingredientes que contrastan",
+      "items": "ingrediente1, ingrediente2, ingrediente3",
+      "why": "explicación aromática breve del contraste"
+    },
+    {
+      "cat": "Compuestos aromáticos clave",
+      "items": "compuesto1, compuesto2, compuesto3",
+      "why": "qué ingredientes de la receta los contienen y con qué combinan"
+    },
+    {
+      "cat": "Ingredientes a evitar",
+      "items": "ingrediente1, ingrediente2",
+      "why": "por qué generan conflicto aromático"
+    }
+  ],
+  "complementario": "Sugerencia de ${tipo==='Cóctel'?'plato o snack':'cóctel'} complementario con nombre, ingredientes principales y justificación aromática. 3-4 líneas."
+}`;
+
+  try{
+    const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,system:PAIRING_SYSTEM})});
+    const data=await res.json();
+    let text=(data.text||'').replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(text);
+    const cardsEl=document.getElementById('pairing-cards');
+    cardsEl.innerHTML='';
+    parsed.categorias.forEach(c=>{
+      const card=document.createElement('div');
+      card.className='pairing-card';
+      card.innerHTML=`<div class="pairing-card-cat">${c.cat}</div><div class="pairing-card-items">${c.items}</div><div class="pairing-card-why">${c.why}</div>`;
+      cardsEl.appendChild(card);
+    });
+    document.getElementById('pairing-cocktail-label').textContent=tipo==='Cóctel'?'Plato / snack complementario':'Cóctel complementario';
+    document.getElementById('pairing-cocktail-content').textContent=parsed.complementario;
+    document.getElementById('pairing-results').style.display='block';
+  }catch(e){
+    document.getElementById('pairing-empty').textContent='Error al analizar. Intentá de nuevo.';
+    document.getElementById('pairing-empty').style.display='flex';
+  }
+  setLoading(false);
+  btn.disabled=false;btn.textContent='Analizar y sugerir matches';
 }
 
 function descargarPDF(){
