@@ -8,11 +8,31 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--black:#0a0a0a;--white:#f5f3ef;--red:#c8102e;--red-dark:#9e0c24;--gray:#888;--gray-light:#e8e5e0;--border:#d0ccc5}
+:root{--black:#0a0a0a;--white:#f5f3ef;--red:#c8102e;--red-dark:#9e0c24;--gray:#888;--border:#d0ccc5}
 *{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px}
 body{background:var(--white);color:var(--black);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh}
 
+/* LOGIN */
+.login-overlay{display:flex;position:fixed;inset:0;background:var(--white);z-index:500;align-items:center;justify-content:center}
+.login-overlay.hidden{display:none}
+.login-box{width:100%;max-width:360px;padding:0 2rem}
+.login-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:2.2rem;letter-spacing:-0.02em;margin-bottom:0.25rem}
+.login-logo .ai{color:var(--red);font-style:italic}
+.login-logo .dash{color:var(--gray);font-weight:300}
+.login-sub{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);margin-bottom:2.5rem}
+.login-field{margin-bottom:1.2rem}
+.login-label{font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:0.5rem}
+.login-input{width:100%;background:var(--white);border:1px solid var(--border);border-radius:0;padding:0.75rem 0.9rem;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:300;color:var(--black);outline:none;transition:border-color 0.2s}
+.login-input:focus{border-color:var(--black)}
+.login-btn{width:100%;margin-top:1.5rem;padding:1rem;background:var(--red);border:none;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:background 0.2s}
+.login-btn:hover{background:var(--red-dark)}
+.login-btn:disabled{background:var(--gray);cursor:not-allowed}
+.login-error{font-size:0.78rem;color:var(--red);margin-top:0.75rem;min-height:1.1rem}
+.login-forgot{font-size:0.72rem;color:var(--gray);margin-top:1rem;cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'DM Sans',sans-serif;display:block}
+.login-forgot:hover{color:var(--black)}
+.login-msg{font-size:0.78rem;color:var(--black);margin-top:0.75rem}
+
+/* APP */
 header{padding:2.5rem 3rem 0;border-bottom:1px solid var(--black);position:relative;animation:fadeDown 0.6s ease both}
 .header-top{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:1.2rem}
 .logo{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(2rem,5vw,3.2rem);letter-spacing:-0.02em;line-height:1;user-select:none}
@@ -20,40 +40,39 @@ header{padding:2.5rem 3rem 0;border-bottom:1px solid var(--black);position:relat
 .logo .dash{color:var(--gray);font-weight:300}
 .tagline{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);padding-bottom:0.3rem}
 .red-line{position:absolute;bottom:-1px;left:3rem;width:4rem;height:3px;background:var(--red)}
+.user-bar{display:flex;align-items:center;gap:1rem;padding-bottom:0.3rem}
+.user-name{font-size:0.72rem;letter-spacing:0.06em;color:var(--gray)}
+.btn-logout{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid var(--border);padding:4px 10px;cursor:pointer;color:var(--gray);font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.btn-logout:hover{border-color:var(--black);color:var(--black)}
 
-.nav-tabs{display:flex;padding:0 3rem;border-bottom:1px solid var(--border);animation:fadeDown 0.6s 0.1s ease both}
+.nav-tabs{display:flex;padding:0 3rem;border-bottom:1px solid var(--border)}
 .nav-tab{font-size:0.75rem;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;padding:1rem 1.5rem 1rem 0;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 0.2s,border-color 0.2s;font-family:'DM Sans',sans-serif}
 .nav-tab.active{color:var(--black);border-bottom-color:var(--red)}
 .nav-tab:hover:not(.active){color:var(--black)}
 
-main{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 130px);animation:fadeUp 0.7s 0.2s ease both}
+main{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 130px)}
 .panel-left{padding:2.5rem 3rem;border-right:1px solid var(--border)}
 .panel-right{padding:2.5rem 3rem;background:var(--black);color:var(--white)}
 
 .section-label{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray);margin-bottom:1.2rem;display:flex;align-items:center;gap:0.75rem}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
-
 .form-group{margin-bottom:1.3rem}
 .form-label{font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:0.5rem}
 select,input[type="text"]{width:100%;background:var(--white);border:1px solid var(--border);border-radius:0;padding:0.65rem 0.9rem;font-family:'DM Sans',sans-serif;font-size:0.86rem;font-weight:300;color:var(--black);appearance:none;-webkit-appearance:none;outline:none;transition:border-color 0.2s;cursor:pointer}
 select:focus,input[type="text"]:focus{border-color:var(--black)}
 .select-wrap{position:relative}
 .select-wrap::after{content:'';position:absolute;right:0.9rem;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--gray);pointer-events:none}
-
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tag{font-size:0.7rem;letter-spacing:0.05em;padding:5px 12px;border:1px solid var(--border);cursor:pointer;color:var(--gray);background:var(--white);transition:all 0.15s;user-select:none}
 .tag:hover{border-color:var(--black);color:var(--black)}
 .tag.active{background:var(--black);color:var(--white);border-color:var(--black)}
-
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-
 .upload-zone{border:1px dashed var(--border);padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.2s}
 .upload-zone:hover{border-color:var(--black)}
 .upload-zone.has-file{border-style:solid;border-color:var(--red)}
 .upload-label{font-size:0.82rem;color:var(--gray)}
 .upload-label strong{color:var(--black);font-weight:500}
 .upload-filename{font-size:0.72rem;color:var(--red);margin-top:6px;font-weight:500}
-
 .btn-generate{width:100%;margin-top:1.8rem;padding:1rem;background:var(--red);border:none;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:background 0.2s}
 .btn-generate:hover{background:var(--red-dark)}
 .btn-generate:disabled{background:var(--gray);cursor:not-allowed}
@@ -62,14 +81,12 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 .empty-number{font-family:'Playfair Display',serif;font-size:9rem;font-weight:900;line-height:1;color:var(--white);opacity:0.06;margin-bottom:-1rem}
 .empty-text{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:#444}
 .empty-sub{font-size:0.72rem;color:#333;letter-spacing:0.05em}
-
 .output-active{display:none;flex-direction:column;min-height:400px}
 .output-active.visible{display:flex}
 .raw-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#555;margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center}
 .raw-hint{color:var(--red);font-size:0.6rem;letter-spacing:0.1em}
 #raw-text{flex:1;width:100%;background:transparent;border:1px solid #222;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:300;line-height:1.9;padding:1rem;resize:none;outline:none;min-height:320px;transition:border-color 0.2s}
 #raw-text:focus{border-color:var(--red)}
-
 .output-actions{display:flex;gap:8px;margin-top:1rem}
 .btn-regen{flex:1;padding:0.75rem;background:transparent;border:1px solid #333;color:#777;font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:400;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
 .btn-regen:hover{border-color:var(--white);color:var(--white)}
@@ -77,6 +94,7 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 .btn-convert{flex:2;padding:0.75rem;background:var(--red);border:1px solid var(--red);color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:background 0.2s}
 .btn-convert:hover{background:var(--red-dark)}
 
+/* FICHA */
 .ficha-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,10,0.88);z-index:100;overflow-y:auto;padding:2rem}
 .ficha-overlay.visible{display:block}
 .ficha-container{max-width:660px;margin:0 auto;background:var(--white);color:var(--black);animation:fadeUp 0.3s ease both}
@@ -97,13 +115,7 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 .btn-download{flex:2;padding:0.85rem;background:var(--red);border:none;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:background 0.2s}
 .btn-download:hover{background:var(--red-dark)}
 
-.loading-bar{display:none;height:2px;background:var(--red);position:fixed;top:0;left:0;width:0;z-index:200;animation:loadbar 2.5s ease-in-out infinite}
-.loading-bar.active{display:block}
-
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-
-.pairing-main{display:block!important;grid-template-columns:unset!important}
+/* PAIRING */
 .panel-full{padding:2.5rem 3rem;max-width:900px;margin:0 auto;width:100%}
 .pairing-input-area{width:100%;background:var(--white);border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:300;color:var(--black);padding:1rem;outline:none;line-height:1.8;resize:vertical;min-height:140px;transition:border-color 0.2s}
 .pairing-input-area:focus{border-color:var(--black)}
@@ -120,7 +132,11 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 .pairing-cocktail-label{font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--red);margin-bottom:0.75rem}
 .pairing-cocktail-content{font-size:0.88rem;font-weight:300;line-height:1.8;white-space:pre-wrap}
 .pairing-empty{min-height:200px;display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;border:1px dashed var(--border)}
-@media(max-width:768px){.panel-full{padding:1.5rem}.pairing-cards{grid-template-columns:1fr}}
+
+.loading-bar{display:none;height:2px;background:var(--red);position:fixed;top:0;left:0;width:0;z-index:600;animation:loadbar 2.5s ease-in-out infinite}
+.loading-bar.active{display:block}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
 
 @keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -138,6 +154,8 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
   .ficha-body,.ficha-header{padding:1.5rem}
   .ficha-actions{padding:0 1.5rem 1.5rem}
   .red-line{left:1.5rem}
+  .panel-full{padding:1.5rem}
+  .pairing-cards{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -145,10 +163,34 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 
 <div class="loading-bar" id="loading-bar"></div>
 
+<!-- LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">COCKT<span class="dash">—</span><span class="ai">AI</span><span class="dash">—</span>L</div>
+    <div class="login-sub">Acceso exclusivo para alumnos</div>
+    <div class="login-field">
+      <label class="login-label">Email</label>
+      <input type="email" class="login-input" id="login-email" placeholder="tu@email.com" autocomplete="email">
+    </div>
+    <div class="login-field">
+      <label class="login-label">Contraseña</label>
+      <input type="password" class="login-input" id="login-password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Ingresar</button>
+    <button class="login-forgot" onclick="doReset()">¿Olvidaste tu contraseña?</button>
+    <div class="login-msg" id="login-msg"></div>
+  </div>
+</div>
+
+<!-- APP -->
 <header>
   <div class="header-top">
     <div class="logo">COCKT<span class="dash">—</span><span class="ai">AI</span><span class="dash">—</span>L</div>
-    <div class="tagline">Joy of Mixology · The Flavor Bible · Food Pairing</div>
+    <div class="user-bar">
+      <span class="user-name" id="user-name"></span>
+      <button class="btn-logout" onclick="doLogout()">Salir</button>
+    </div>
   </div>
   <div class="red-line"></div>
 </header>
@@ -160,8 +202,7 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 </nav>
 
 <main id="main-layout">
-  <div class="panel-left" id="panel-left-cols">
-
+  <div class="panel-left">
     <div class="tab-panel active" id="tab-manual">
       <div class="section-label">Perfil del cóctel</div>
       <div class="form-grid">
@@ -186,23 +227,15 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
           <div class="select-wrap">
             <select id="destilado">
               <option value="">Seleccionar</option>
-              <option>Tequila blanco</option>
-              <option>Tequila reposado</option>
-              <option>Mezcal</option>
-              <option>Ron blanco</option>
-              <option>Ron añejo</option>
-              <option>Gin</option>
-              <option>Vodka</option>
-              <option>Whisky bourbon</option>
-              <option>Whisky scotch</option>
-              <option>Pisco</option>
-              <option>Brandy / Cognac</option>
-              <option>Sin alcohol</option>
+              <option>Tequila blanco</option><option>Tequila reposado</option>
+              <option>Mezcal</option><option>Ron blanco</option><option>Ron añejo</option>
+              <option>Gin</option><option>Vodka</option><option>Whisky bourbon</option>
+              <option>Whisky scotch</option><option>Pisco</option>
+              <option>Brandy / Cognac</option><option>Sin alcohol</option>
             </select>
           </div>
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Estética del bar</label>
         <div class="tags">
@@ -216,7 +249,6 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
           <div class="tag" data-group="estetica">Fine dining / Alta coctelería</div>
         </div>
       </div>
-
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">Zona geográfica</label>
@@ -248,12 +280,10 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
           </div>
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Ingrediente protagonista (opcional)</label>
         <input type="text" id="ingrediente" placeholder="Ej: chile ancho, maracuyá, lavanda, café...">
       </div>
-
       <button class="btn-generate" id="btn-manual" onclick="generarManual()">Generar cóctel</button>
     </div>
 
@@ -284,14 +314,10 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
           <div class="select-wrap">
             <select id="pdf-destilado">
               <option value="Sugerir según el PDF">Sugerir según el PDF</option>
-              <option>Tequila blanco</option>
-              <option>Tequila reposado</option>
-              <option>Mezcal</option>
-              <option>Ron blanco</option>
-              <option>Gin</option>
-              <option>Vodka</option>
-              <option>Whisky bourbon</option>
-              <option>Sin alcohol</option>
+              <option>Tequila blanco</option><option>Tequila reposado</option>
+              <option>Mezcal</option><option>Ron blanco</option>
+              <option>Gin</option><option>Vodka</option>
+              <option>Whisky bourbon</option><option>Sin alcohol</option>
             </select>
           </div>
         </div>
@@ -302,7 +328,6 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
       </div>
       <button class="btn-generate" id="btn-pdf" onclick="generarDesdePDF()" disabled>Subí un PDF primero</button>
     </div>
-
   </div>
 
   <div class="panel-right">
@@ -325,34 +350,29 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
   </div>
 </main>
 
-<!-- PAIRING PANEL — full width, outside main grid -->
+<!-- PAIRING PANEL -->
 <div id="panel-pairing" style="display:none">
   <div class="panel-full">
     <div class="section-label" style="margin-bottom:1rem">Analizá tu receta</div>
-
     <div class="pairing-type-tags">
-      <div class="tag active" data-group="ptype" id="ptype-coctel">Cóctel</div>
-      <div class="tag" data-group="ptype" id="ptype-plato">Plato / snack</div>
-      <div class="tag" data-group="ptype" id="ptype-ambos">Combinación cóctel + plato</div>
+      <div class="tag active" data-group="ptype">Cóctel</div>
+      <div class="tag" data-group="ptype">Plato / snack</div>
+      <div class="tag" data-group="ptype">Combinación cóctel + plato</div>
     </div>
-
     <div class="form-group">
       <label class="form-label">Pegá o escribí tu receta</label>
-      <textarea class="pairing-input-area" id="pairing-receta" placeholder="Ej: Ceviche de camarón con leche de tigre, ají amarillo, cilantro, maíz tostado y aguacate..."></textarea>
+      <textarea class="pairing-input-area" id="pairing-receta" placeholder="Ej: Ceviche de camarón con leche de tigre, ají amarillo, cilantro, maíz tostado..."></textarea>
     </div>
-
     <div class="form-group" style="margin-top:1rem">
       <label class="form-label">Objetivo del match (opcional)</label>
-      <input type="text" id="pairing-objetivo" placeholder="Ej: busco contraste, potenciar los cítricos, sugerir cóctel de maridaje...">
+      <input type="text" id="pairing-objetivo" placeholder="Ej: potenciar los cítricos, buscar contraste, sugerir cóctel de maridaje...">
     </div>
-
     <button class="btn-generate" id="btn-pairing" onclick="analizarPairing()" style="margin-top:1.5rem">Analizar y sugerir matches</button>
-
     <div class="pairing-results" id="pairing-results" style="display:none">
       <div class="pairing-results-label">Sugerencias de Food Pairing</div>
       <div class="pairing-cards" id="pairing-cards"></div>
-      <div class="pairing-results-label" style="margin-top:1.5rem" id="pairing-cocktail-label">Cóctel / plato complementario</div>
-      <div class="pairing-cocktail" id="pairing-cocktail">
+      <div class="pairing-results-label" style="margin-top:1.5rem" id="pairing-cocktail-label">Complementario sugerido</div>
+      <div class="pairing-cocktail">
         <div class="pairing-cocktail-content" id="pairing-cocktail-content"></div>
       </div>
     </div>
@@ -360,6 +380,7 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
   </div>
 </div>
 
+<!-- FICHA OVERLAY -->
 <div class="ficha-overlay" id="ficha-overlay">
   <div class="ficha-container">
     <div class="ficha-header">
@@ -408,7 +429,67 @@ select:focus,input[type="text"]:focus{border-color:var(--black)}
 if(typeof pdfjsLib!=='undefined')pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 let pdfText='',lastPrompt='';
+let sessionToken=sessionStorage.getItem('cai_token')||'';
+let sessionUser=sessionStorage.getItem('cai_user')||'';
 
+// ── AUTH ──
+window.addEventListener('DOMContentLoaded',()=>{
+  if(sessionToken){
+    showApp();
+  }
+  document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+});
+
+function showApp(){
+  document.getElementById('login-overlay').classList.add('hidden');
+  document.getElementById('user-name').textContent=sessionUser;
+}
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const password=document.getElementById('login-password').value;
+  const errEl=document.getElementById('login-error');
+  const btn=document.getElementById('login-btn');
+  if(!email||!password){errEl.textContent='Completá email y contraseña.';return;}
+  btn.disabled=true;btn.textContent='Ingresando...';errEl.textContent='';
+  try{
+    const res=await fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'login',email,password})});
+    const data=await res.json();
+    if(!res.ok){errEl.textContent=data.error||'Error al ingresar.';btn.disabled=false;btn.textContent='Ingresar';return;}
+    sessionToken=data.token;
+    sessionUser=data.nombre||email;
+    sessionStorage.setItem('cai_token',sessionToken);
+    sessionStorage.setItem('cai_user',sessionUser);
+    showApp();
+  }catch(e){errEl.textContent='Error de conexión.';btn.disabled=false;btn.textContent='Ingresar';}
+}
+
+async function doReset(){
+  const email=document.getElementById('login-email').value.trim();
+  const msgEl=document.getElementById('login-msg');
+  const errEl=document.getElementById('login-error');
+  if(!email){errEl.textContent='Ingresá tu email primero.';return;}
+  errEl.textContent='';msgEl.textContent='Enviando...';
+  try{
+    await fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'reset',email})});
+    msgEl.textContent='Si el email existe, recibirás un link para resetear tu contraseña.';
+  }catch(e){msgEl.textContent='Error al enviar. Intentá de nuevo.';}
+}
+
+function doLogout(){
+  sessionStorage.removeItem('cai_token');
+  sessionStorage.removeItem('cai_user');
+  sessionToken='';sessionUser='';
+  document.getElementById('login-overlay').classList.remove('hidden');
+  document.getElementById('login-email').value='';
+  document.getElementById('login-password').value='';
+  document.getElementById('login-error').textContent='';
+  document.getElementById('login-msg').textContent='';
+  document.getElementById('login-btn').disabled=false;
+  document.getElementById('login-btn').textContent='Ingresar';
+}
+
+// ── TABS ──
 function switchTab(t){
   document.querySelectorAll('.nav-tab').forEach((el,i)=>el.classList.toggle('active',(i===0&&t==='manual')||(i===1&&t==='pdf')||(i===2&&t==='pairing')));
   document.getElementById('tab-manual').classList.toggle('active',t==='manual');
@@ -425,6 +506,7 @@ document.querySelectorAll('.tag').forEach(tag=>{
   });
 });
 
+// ── PDF ──
 const dropZone=document.getElementById('drop-zone');
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.style.borderColor='var(--red)';});
 dropZone.addEventListener('dragleave',()=>{dropZone.style.borderColor='';});
@@ -449,6 +531,7 @@ async function processPDF(file){
   }catch(e){btn.textContent='Error al leer el PDF.';btn.disabled=false;}
 }
 
+// ── API ──
 const SYSTEM=`Eres un bartender conceptual con conocimiento profundo de "The Joy of Mixology" de Gary Regan, "The Flavor Bible" de Karen Page, y los principios de Food Pairing. Creás cócteles originales, técnicamente justificados.`;
 const FORMAT=`Respondé ÚNICAMENTE con este formato, sin texto antes ni después:
 
@@ -473,7 +556,12 @@ async function callAPI(prompt,onStart,onEnd){
   const rt=document.getElementById('raw-text');
   rt.value='';rt.placeholder='Generando...';
   try{
-    const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,system:SYSTEM})});
+    const res=await fetch('/api/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-session-token':sessionToken},
+      body:JSON.stringify({prompt,system:SYSTEM})
+    });
+    if(res.status===401||res.status===403){doLogout();return;}
     const data=await res.json();
     rt.value=data.text||'Sin respuesta.';
     rt.style.height='auto';rt.style.height=rt.scrollHeight+'px';
@@ -488,7 +576,7 @@ function generarManual(){
   const zona=document.getElementById('zona').value;
   const estacion=document.getElementById('estacion').value;
   const ingrediente=document.getElementById('ingrediente').value;
-  const esteticaTag=document.querySelector('.tag.active');
+  const esteticaTag=document.querySelector('.tag[data-group="estetica"].active');
   const estetica=esteticaTag?esteticaTag.textContent.trim():'';
   const prompt=`Creá un cóctel original con estos parámetros:
 - Familia (Regan): ${familia}
@@ -507,16 +595,7 @@ function generarDesdePDF(){
   const familia=document.getElementById('pdf-familia').value;
   const destilado=document.getElementById('pdf-destilado').value;
   const extra=document.getElementById('pdf-extra').value;
-  const prompt=`Analizá este documento y creá un cóctel coherente con su identidad:
-
-DOCUMENTO:
-${pdfText}
-
-PARÁMETROS:
-- Familia: ${familia}
-- Destilado: ${destilado}
-${extra?`- Instrucción: ${extra}`:''}
-${FORMAT}`;
+  const prompt=`Analizá este documento y creá un cóctel coherente con su identidad:\n\nDOCUMENTO:\n${pdfText}\n\nPARÁMETROS:\n- Familia: ${familia}\n- Destilado: ${destilado}\n${extra?`- Instrucción: ${extra}`:''}\n${FORMAT}`;
   const btn=document.getElementById('btn-pdf');
   callAPI(prompt,()=>{btn.disabled=true;btn.textContent='Generando...';},()=>{btn.disabled=false;btn.textContent='Generar cóctel desde este documento';});
 }
@@ -547,6 +626,7 @@ function cerrarFicha(){
   document.body.style.overflow='';
 }
 
+// ── PAIRING ──
 async function analizarPairing(){
   const receta=document.getElementById('pairing-receta').value.trim();
   if(!receta){alert('Ingresá una receta para analizar.');return;}
@@ -559,45 +639,18 @@ async function analizarPairing(){
   document.getElementById('pairing-empty').style.display='none';
   document.getElementById('pairing-results').style.display='none';
 
-  const PAIRING_SYSTEM=`Eres un experto en Food Pairing con conocimiento profundo de "The Flavor Bible" de Karen Page y los principios científicos de Food Pairing (compuestos aromáticos compartidos). Analizás recetas e identificás afinidades y contrastes aromáticos con precisión técnica.`;
-
-  const prompt=`Analizá esta receta de tipo "${tipo}" aplicando los principios de Food Pairing y The Flavor Bible:
-
-RECETA:
-${receta}
-${objetivo?`\nOBJETIVO: ${objetivo}`:''}
-
-Respondé ÚNICAMENTE con este JSON, sin texto antes ni después, sin bloques de código markdown:
-{
-  "categorias": [
-    {
-      "cat": "Ingredientes que potencian",
-      "items": "ingrediente1, ingrediente2, ingrediente3",
-      "why": "explicación aromática breve de por qué funcionan"
-    },
-    {
-      "cat": "Ingredientes que contrastan",
-      "items": "ingrediente1, ingrediente2, ingrediente3",
-      "why": "explicación aromática breve del contraste"
-    },
-    {
-      "cat": "Compuestos aromáticos clave",
-      "items": "compuesto1, compuesto2, compuesto3",
-      "why": "qué ingredientes de la receta los contienen y con qué combinan"
-    },
-    {
-      "cat": "Ingredientes a evitar",
-      "items": "ingrediente1, ingrediente2",
-      "why": "por qué generan conflicto aromático"
-    }
-  ],
-  "complementario": "Sugerencia de ${tipo==='Cóctel'?'plato o snack':'cóctel'} complementario con nombre, ingredientes principales y justificación aromática. 3-4 líneas."
-}`;
+  const PAIRING_SYSTEM=`Eres un experto en Food Pairing con conocimiento profundo de "The Flavor Bible" de Karen Page y los principios científicos de Food Pairing. Analizás recetas e identificás afinidades y contrastes aromáticos con precisión técnica.`;
+  const prompt=`Analizá esta receta de tipo "${tipo}" aplicando Food Pairing y The Flavor Bible:\n\nRECETA:\n${receta}\n${objetivo?`\nOBJETIVO: ${objetivo}`:''}\n\nRespondé ÚNICAMENTE con este JSON, sin texto antes ni después, sin bloques de código:\n{"categorias":[{"cat":"Ingredientes que potencian","items":"item1, item2, item3","why":"explicación aromática"},{"cat":"Ingredientes que contrastan","items":"item1, item2, item3","why":"explicación del contraste"},{"cat":"Compuestos aromáticos clave","items":"compuesto1, compuesto2","why":"qué ingredientes los tienen y con qué combinan"},{"cat":"Ingredientes a evitar","items":"item1, item2","why":"por qué generan conflicto"}],"complementario":"Sugerencia de ${tipo==='Cóctel'?'plato o snack':'cóctel'} complementario con nombre, ingredientes y justificación aromática en 3-4 líneas."}`;
 
   try{
-    const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,system:PAIRING_SYSTEM})});
+    const res=await fetch('/api/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-session-token':sessionToken},
+      body:JSON.stringify({prompt,system:PAIRING_SYSTEM})
+    });
+    if(res.status===401||res.status===403){doLogout();return;}
     const data=await res.json();
-    let text=(data.text||'').replace(/```json|```/g,'').trim();
+    const text=(data.text||'').replace(/```json|```/g,'').trim();
     const parsed=JSON.parse(text);
     const cardsEl=document.getElementById('pairing-cards');
     cardsEl.innerHTML='';
@@ -618,6 +671,7 @@ Respondé ÚNICAMENTE con este JSON, sin texto antes ni después, sin bloques de
   btn.disabled=false;btn.textContent='Analizar y sugerir matches';
 }
 
+// ── PDF DOWNLOAD ──
 function descargarPDF(){
   const{jsPDF}=window.jspdf;
   const doc=new jsPDF({unit:'mm',format:'a4'});
