@@ -1,0 +1,12 @@
+{
+  "name": "cockt-ai-l",
+  "version": "1.0.0",
+  "description": "Generador de cócteles con IA basado en Joy of Mixology, The Flavor Bible y Food Pairing",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
